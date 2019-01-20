@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<rules>
+		<rule pattern="[0-9]{3}-([0-9]{3})-[0-9]{3}" replace-to="$1" />
+		<rule pattern="[0-9]{3}-([0-9]{3})-[0-9]{3}" replace-to="$1" />
+		<rule pattern="[0-9]{3}-([0-9]{3})-[0-9]{3}" replace-to="$1" />
+		<rule pattern="[0-9]{3}-([0-9]{3})-[0-9]{3}" replace-to="$1" />
+		<rule pattern="[0-9]{3}-([0-9]{3})-[0-9]{3}" replace-to="$1" />
+	</rules>
+</config>

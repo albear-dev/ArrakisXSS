@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<filters default="OWASP-Filter">
+		<filter>
+			<name>OWASP-Filter</name>
+			<classPath>net.ngom.arrakis.filter.OWASPFilter</classPath>
+		</filter>
+		<filter>
+			<name>SQLInjectionFilter</name>
+			<classPath>net.ngom.arrakis.filter.SQLInjectionFilter</classPath>
+		</filter>
+		<filter>
+			<name>CustomFilter</name>
+			<classPath>net.ngom.arrakis.filter.DefaultFilter</classPath>
+			<configPath>/DefaultXSSFilterConfig.xml</configPath>
+		</filter>
+		<filter>
+			<name>CustomFilter2</name>
+			<classPath>net.ngom.arrakis.filter.DefaultFilter</classPath>
+			<config>
+				<rules>
+					<rule pattern="wrongValue" replace-to="correctValue" />
+					<rule pattern="[0-9]{3}-([0-9]{3})-[0-9]{3}" replace-to="$1" />
+					<rule>
+						<pattern><![CDATA[\'([a-zA-Z]+)\']]></pattern>
+						<replace-to><![CDATA[<$1>]]></replace-to>
+					</rule>
+				</rules>
+			</config>
+		</filter>
+	</filters>
+	
+	<appliers>
+		<applier>
+			<inspect filter="OWASP-Filter, SQLInjectionFilter" />
+		</applier>
+		
+		<applier>
+			<conditions ref-type="RequestMap">
+				<condition>
+					<match ref-type="RequestMetaMap" key-name="URI"  match-type="startWith" >/process</match>
+					<match                			 key-name="key1" match-type="endWith">.do</match>
+					<match                			 key-name="key2" match-type="exactly">exact</match>
+					<match                			 key-name="key3" match-type="contains">contains</match>
+					<match                			 key-name="key4" match-type="regex">[a-zA-Z]+</match>
+					<match                			 key-name="key5"                   >exact</match><!-- default exaxtly -->
+				</condition>
+				
+				<condition>
+					<match operator="not" ref-type="RequestMetaMap" key-name="url">/exclude.do</match>
+				</condition>
+			</conditions>
+			
+			<inspect exclude="true">
+				<rule key-name="key2" filter="CustomFilter2" />
+				<rule key-name="key3" exclude="true" />		
+			</inspect>
+			
+		</applier>
+	</appliers>
+	
+</config>

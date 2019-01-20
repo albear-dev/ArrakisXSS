@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<filters default="OWASP-Filter">
+		<filter>
+			<name>OWASP-Filter</name>
+			<classPath>kr.co.ensof.xss.filter.DefaultFilter</classPath>
+		</filter>
+		
+		<filter>
+			<name>SQLInjectionFilter</name>
+			<classPath>kr.co.ensof.xss.filter.SQLInjectionFilter</classPath>
+		</filter>
+		
+	</filters>
+	
+	<appliers>
+		<applier>
+			<!-- conditions 가 없으면 전체 적용 -->
+			<inspect filter="OWASP-Filter, SQLInjectionFilter"  />
+		</applier>
+	</appliers>
+	
+</config>
