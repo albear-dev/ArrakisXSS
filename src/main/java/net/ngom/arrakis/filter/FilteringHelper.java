@@ -52,9 +52,11 @@ public class FilteringHelper {
 			List<Condition> conditionList = applier.getConditions().getConditionList();
 			String conditionsRefType 	= applier.getConditions().getRefType();
 			
+			boolean isConditionMatched = false;
 			for(Condition condition: conditionList) {
 				logger.debug("[FilteringHelper][condition] Loop Condition["+condition.getName()+"]");
-				if(doConditionMatch(cmvc, condition, conditionsRefType, paramKey, value)) {
+				isConditionMatched = doConditionMatch(cmvc, condition, conditionsRefType, paramKey, value);
+				if(isConditionMatched) {
 					logger.debug("[FilteringHelper][condition] Condition Matched!");
 					
 					logger.debug("[inspect] doConditionMatched (true) !!!!!");
@@ -70,7 +72,7 @@ public class FilteringHelper {
 			}
 			
 			// 특정 appliers 에서 컨디션이 맞아서 처리가 되면 이후는 실행하지 않는다.
-			if(applier.getMatchBreak()) {
+			if(isConditionMatched && applier.getMatchBreak()) {
 				logger.debug("[inspect] applier.getMatchBreak is ("+applier.getMatchBreak()+") next applier not execute.");
 				break;
 			}
