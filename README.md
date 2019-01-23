@@ -108,40 +108,39 @@ Rule based message filter (Using servlet filter for XSS,  You want to filter for
 		</filter>
 	</filters>
 
-	<appliers>
-		<applier>
-			<conditions ref-type="RequestMetaMap">
-				<condition>
-					<match key-name="URI" match-type="startWith">/process</match>
-					<match key-name="URI" match-type="endWith">.do</match>
-				</condition>
-			</conditions>
-			<inspect exclude="true">
-		</applier>
+<appliers>
+	<applier break="true">
+		<conditions ref-type="RequestMetaMap">
+			<condition>
+				<match key-name="URI" match-type="startWith">/process2</match>
+			</condition>
+		</conditions>
+		<inspect exclude="true">
+	</applier>
 		
-		<applier>
-			<conditions ref-type="RequestMetaMap">
-				<condition>
-					<match key-name="URI" match-type="startWith">/ex_process</match>
-				</condition>
-			</conditions>
-			<inspect filter="CustomFilter">
-				<rule key-name="key2" filter="CustomFilter2" />
-				<rule key-name="key3" exclude="true" />
-			</inspect>
-		</applier>
+	<applier break="true">
+		<conditions>
+			<condition>
+				<match ref-type="RequestMetaMap" key-name="URI"  match-type="startWith" >/process</match>
+				<match ref-type="SimpleKeyMatch" match-type="exactly" >key3</match>
+			</condition>
+		</conditions>
+		<inspect exclude="true" />
+	</applier>
 		
-		<applier>
-			<inspect filter="OWASP-Filter, SQLInjectionFilter" />
-		</applier>
-	</appliers>
+	<applier>
+		<inspect filter="OWASP-Filter, SQLInjectionFilter" />
+	</applier>
+</appliers>
+
 </config>
 ```
 
 > 위 &lt;condition&gt;내 &lt;match&gt;에 해당하는 조건일 경우 실제 실행 설정인 &lt;inspect&gt; 의 속성이 exclude=”true”이면 해당 요청은 별도 처리 없이 통과시킨다.
 
-> 이후 두번째 &lt;applier&gt;를 비교하게 되고 예제에서는 URI가 /ex_process로 시작하는 요청은 CustomFilter로 전부 처리되게 된다.
-바로 아래 필터링 조건인 inspect에서  특정 파라메터 키 값을 제외하거나 별도 필터를 적용가능한데 예제에서는 key2 값은 CustomFilter2를 적용하게 되고 key3는 필터링에서 제외하게 된다.
+> 기본적으로는 여러개의 &lt;applier&gt;가 선언되어 있으면 순서대로 처리를 수행한다. 다만 applier의 옵션 중 break=”true” 로 설정된 부분이 있으면 선언된 &lt;applier&gt;를 수행하면 이후 &lt;applier&gt;는 수행하지 않는다.
+	
+> 그 외 의 경우 두번째 &lt;applier&gt;를 비교하게 되고 해당 condition으로 특정 URI가 /process 로 시작하면서 key3라는 이름을 가진 키(파라메터) 의 경우에는 아래 &lt;inspect&gt; 를 통해 제외시킨다..
 
 > 세번째 applier에는 condition조건이 없으므로 요청 전체를 inspect 에 적용한 로직으로 수행한다. 예제에서는 OWASP-Filter와 SQLInjectionFiler가 선언되어 있으므로 두개를 순서대로 필터링 하게 된다.
 
