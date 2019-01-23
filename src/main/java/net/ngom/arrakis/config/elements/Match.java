@@ -1,7 +1,7 @@
 package net.ngom.arrakis.config.elements;
 
 import java.io.Serializable;
-import java.util.regex.Matcher;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -162,6 +162,59 @@ public class Match implements Serializable {
 		}
 		
 		logger.debug("[compare] result["+result+"]");
+		return result;
+	}
+	
+	private boolean _arrayContain(String[] srcValues) {
+		logger.debug("[_arrayContain] start!");
+		logger.debug("[_arrayContain] srcValues [" +Arrays.toString(srcValues)+"] matchSetvalue [" +this.value+"] matchType["+this.matchType+"]");
+		
+		if(srcValues == null || srcValues.length == 0) return false;
+		
+		boolean isContain = false;
+		for(int i=0; i<srcValues.length; i++) {
+			if (this.matchType == null || "exactly".equals(this.matchType)) {
+				isContain = srcValues[i].equals(this.value);
+				
+			} else if ("exactly".equals(this.matchType)) {
+				isContain = srcValues[i].equals(this.value);
+				
+			} else if ("startWith".equals(this.matchType)) {
+				isContain = srcValues[i].startsWith(this.value);
+				
+			} else if ("endWith".equals(this.matchType)) {
+				isContain = srcValues[i].endsWith(this.value);
+				
+			} else if ("contains".equals(this.matchType)) {
+				isContain = srcValues[i].indexOf(this.value)==-1?false:true;
+				
+			} else if ("regex".equals(this.matchType)) {
+				Pattern p = null;
+				if(this.pattern != null) {
+					p = Pattern.compile(this.pattern);
+				}else {
+					p = Pattern.compile(this.value);
+				}
+				isContain = p.matcher(srcValues[i]).find();
+			} else {
+				isContain = false;
+			}
+			
+			if(isContain) {
+				break;
+			}
+		}
+		
+		return isContain;
+	}
+	
+	public boolean arrayContain(String[] srcValues) {
+		boolean result = _arrayContain(srcValues);
+		if("not".equals(this.operator)) {
+			return !result;
+		}
+		
+		logger.debug("[arrayContain] result["+result+"]");
 		return result;
 	}
 

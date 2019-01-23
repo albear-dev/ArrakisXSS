@@ -53,6 +53,24 @@ public class ConditionMatchValueRequestMap implements ConditionMatchValue, Seria
 			return match.compare(sb.toString());
 		}
 	}
+	
+	/*
+	public Boolean isMatch(Match match) {
+		String[] paramValues = parametorMap.get(match.getKeyName());
+		if(paramValues == null || paramValues.length == 0) {
+			return false;
+		}else if(paramValues.length == 1) {
+			return match.compare(paramValues[0]);
+		}else {
+			StringBuffer sb = new StringBuffer();
+			for(String param: paramValues) {
+				sb.append(param + ",");
+			}
+			sb.deleteCharAt(sb.length());
+			return match.compare(sb.toString());
+		}
+	}
+	*/
 
 	public String getValue(String key) {
 		return Arrays.toString(parametorMap.get(key));

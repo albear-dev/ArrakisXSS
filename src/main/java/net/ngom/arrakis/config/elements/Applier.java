@@ -14,6 +14,9 @@ public class Applier implements Serializable {
 	private Inspect inspect;
 	@XmlAttribute(name = "name")
 	private String name;
+	@XmlAttribute(name = "break")
+	private Boolean matchBreak;
+	
 	
 	public Conditions getConditions() {
 		return conditions;
@@ -33,6 +36,12 @@ public class Applier implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+	public Boolean getMatchBreak() {
+		if(this.matchBreak == null) return false;
+		return matchBreak;
+	}
+	public void setMatchBreak(Boolean matchBreak) {
+		this.matchBreak = matchBreak;
+	}
 	
 }

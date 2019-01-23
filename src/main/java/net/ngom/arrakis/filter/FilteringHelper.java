@@ -43,7 +43,10 @@ public class FilteringHelper {
 				logger.debug("[FilteringHelper] <contions> is not exists. apply all filtering values.");
 				//return doInspect(applier, paramKey, tempFilteredValue);
 				tempFilteredValue = doInspect(applier, paramKey, tempFilteredValue);
-				continue;
+				
+				// condition이 없으면 바로 inspect를 실행하고 종료.
+				// 먼저 applier가 실행되면 뒤쪽은 무시된다.
+				break;
 			}
 			
 			List<Condition> conditionList = applier.getConditions().getConditionList();
@@ -51,7 +54,7 @@ public class FilteringHelper {
 			
 			for(Condition condition: conditionList) {
 				logger.debug("[FilteringHelper][condition] Loop Condition["+condition.getName()+"]");
-				if(doConditionMatch(cmvc, condition, conditionsRefType)) {
+				if(doConditionMatch(cmvc, condition, conditionsRefType, paramKey, value)) {
 					logger.debug("[FilteringHelper][condition] Condition Matched!");
 					
 					logger.debug("[inspect] doConditionMatched (true) !!!!!");
@@ -60,7 +63,16 @@ public class FilteringHelper {
 					logger.debug("[inspect] doConditionMatched (true) return value ["+inspectResultValue+"]");
 					//return inspectResultValue;
 					tempFilteredValue = inspectResultValue;
+					
+					// 각 condition 끼리는 or 조건으로 한개가 맞으면 inspect를 실행하고 종료.
+					break;
 				}
+			}
+			
+			// 특정 appliers 에서 컨디션이 맞아서 처리가 되면 이후는 실행하지 않는다.
+			if(applier.getMatchBreak()) {
+				logger.debug("[inspect] applier.getMatchBreak is ("+applier.getMatchBreak()+") next applier not execute.");
+				break;
 			}
 		}
 		
@@ -70,12 +82,14 @@ public class FilteringHelper {
 	}
 	
 	
-	private boolean doConditionMatch(ConditionMatchValueCollection cmvc, Condition condition, String conditionsRefType) {
+	// 현재 filtering 에서 key/value가 들어오므로 이 값으로 비교해야 한다.
+	// ConditionMatchValueCollection으로 비교하는건 이상함...
+	private boolean doConditionMatch(ConditionMatchValueCollection cmvc, Condition condition, String conditionsRefType, String paramKey, String value) {
 		logger.debug("[FilteringHelper][condition[doConditionMatch]] doConditionMatch Start!");
 		
 		String conditionRefType = condition.getRefType();
 		String operator = condition.getOperator();
-		ConditionMatchValue conditionMatchValue;
+		ConditionMatchValue conditionMatchValue = null;
 		boolean isConditionMatched = false;
 		
 		logger.debug("[C:FilteringHelper][v:condition[M:doConditionMatch]] conditionName["+condition.getName()+"] conditionRefType["+conditionRefType+"] operator["+operator+"]");
@@ -84,9 +98,36 @@ public class FilteringHelper {
 			logger.debug("[C:FilteringHelper][v:condition[M:doConditionMatch[v:match]]] matchName["+match.getName()+"]");
 			String matchRefType = match.getRefType();
 			conditionMatchValue = cmvc.getConditionMatchValue(pickRefType(conditionsRefType, conditionRefType, matchRefType));
+			
 			logger.debug("[C:FilteringHelper][v:condition[M:doConditionMatch[v:match]]] conditionMatchValue is null["+(conditionMatchValue==null?true:false)+"]");
 			
-			if(conditionMatchValue != null) {
+			if(conditionMatchValue == null) {
+				
+				// 등록된 컨디션이 없으면 기본 key/value 비교를 한다.
+				if("or".equals(operator)) {
+					logger.debug("[C:FilteringHelper][v:condition[M:doConditionMatch[v:match]]] (operator or)call 'isMatch' from [Simple Key/Value].");
+					
+					if("SimpleKeyMatch".equals(matchRefType)) {
+						isConditionMatched = isConditionMatched||match.compare(paramKey);
+					}else if("SimpleValueMatch".equals(matchRefType)) {
+						isConditionMatched = isConditionMatched||match.compare(value);
+					}
+					
+					if(isConditionMatched) break;
+					
+				}else if("and".equals(operator)) {
+					logger.debug("[C:FilteringHelper][v:condition[M:doConditionMatch[v:match]]] (operator and) call 'isMatch' from [Simple Key/Value].");
+					
+					if("SimpleKeyMatch".equals(matchRefType)) {
+						isConditionMatched = match.compare(paramKey);
+					}else if("SimpleValueMatch".equals(matchRefType)) {
+						isConditionMatched = match.compare(value);
+					}
+					
+					if(!isConditionMatched) break;
+				}
+				
+			}else {
 				logger.debug("[C:FilteringHelper][v:condition[M:doConditionMatch[v:match]]] conditionMatchValueStructureId["+conditionMatchValue.getStructureId()+"]");
 				logger.debug("[C:FilteringHelper][v:condition[M:doConditionMatch[v:match]]] before isConditionMatched["+isConditionMatched+"]");
 				
@@ -219,7 +260,7 @@ public class FilteringHelper {
 	
 	private String pickRefType(String conditionsRefType, String conditionRefType, String matchRefType) {
 		String currentRefType = null;
-		if(matchRefType != null && conditionsRefType.length() > 0) {
+		if(matchRefType != null && matchRefType.length() > 0) {
 			currentRefType = matchRefType;
 		}else {
 			if(conditionRefType != null && conditionRefType.length() > 0) {
