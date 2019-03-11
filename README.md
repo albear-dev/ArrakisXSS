@@ -4,9 +4,12 @@ Rule based message filter (Using servlet filter for XSS,  You want to filter for
 ## 1. 개요
 - 이 모듈은 룰 기반의 필터링을 수행할 수 있는것이 장점이며, 서블릿 XSS방지 뿐만이 아니라 범용적으로 특정 값이 특정 조건에 만족하면 특정 문자열 필터링을 수행할수 있는 모듈로 동작하게 하도록 만든것이 모토입니다. 그래서 사용자는 URL및 키 비교 등 여러 조건을 설정파일에 추가함으로써 쉽게 동작하도록 설정할 수 있으며 개발자는 원하면 XSS 필터링 외에 특정 동작을 수행하는 필터를 확장하여 만들어 적용할 수 도 있습니다. 좀 특별한 예를 들자면 /process.do 에서 key1의 값을 암호화 해서 던지면 복호화하는 filter를 구현하여 서블릿에서 사용 가능하게도 이용이 가능합니다.
 
-- 마지막으로 ArrakisXSS라는 이름은 제가 어릴적 좋아하던 프랭크 허버트의 Dune이라는 소설에서 나오는 사막행성의 이름에서 따 왔습니다. 이 행성에서는 거대한 모래벌레가 땅속을 돌아다니며 땅 위의 불순분자들을 잡아먹고 다니지요.
+- 마지막으로 ArrakisXSS라는 이름은 제가 어릴적 좋아하던 프랭크 허버트의 Dune이라는 소설에서 나오는 사막행성의 이름에서 따 왔습니다. 이 행성에서는 거대한 모래벌레가 땅속을 돌아다니며 사막 위의 움직이는 것들을 잡아 먹고 다니지요.
 
-## 2. 사용법
+## 2. 사용 가능 환경
+- java 1.7 이상의 환경 (일부 라이브러리가 1.7 이상을 필요로 함)
+
+## 3. 사용법
 - 웹 어플리케이션의 WEB-INF/web.xml 에 아래 정보를 추가한다.
 ```xml
 <filter>
@@ -40,10 +43,10 @@ Rule based message filter (Using servlet filter for XSS,  You want to filter for
 
 - WAS 서버를 기동한다.
 
-## 3. 필더 모듈의 임시 해제
+## 4. 필더 모듈의 임시 해제
 - 모듈 사용을 중단하려면 web.xml 의 추가하였던 filter 설정과 filer-mapping 설정을 주석처리한다.
 
-## 4. 설정 예제
+## 5. 설정 예제
 - 기본 설정 (전체적용) - ArrakisXSSConfig.xml
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -145,17 +148,22 @@ Rule based message filter (Using servlet filter for XSS,  You want to filter for
 > 세번째 applier에는 condition조건이 없으므로 요청 전체를 inspect 에 적용한 로직으로 수행한다. 예제에서는 OWASP-Filter와 SQLInjectionFiler가 선언되어 있으므로 두개를 순서대로 필터링 하게 된다.
 
 
-## 5. 설정 옵션 설명
-- 각 세부 Element 와 Attribute 설명 (추후 보완 예정)
+## 6. 설정 옵션 설명
+- 해당 저장소의 Documents 폴더 내 docx 파일 참고
 
-## 6. 기본 제공 Filter 설명
+|언어(language)   |파일명(filename)|
+|:----            |:----|
+|영문(english)    |ArrakisXSS Option Guide.en.docx|
+|한글(korean)     |ArrakisXSS Option Guide.ko.docx|
+
+## 7. 기본 제공 Filter 설명
 |CLASS 경로                                 |설명|
 |:----                                      |:----|
 |net.ngom.arrakis.filter.DefaultFilter	    |설정파일의 Rule설정에 따라 단순 정규식에 따른 Replace를 수행하는 Filter. 내부적으로 java의 replaceAll 함수를 이용한다.|
 |net.ngom.arrakis.filter.OWASPFilter	        |OWASP라는 비영리 오픈소스 웹 애플리케이션 보안 프로젝트에서 배포하는 보안취약점 개선 라이브러리를 사용한다. https://www.owasp.org/index.php/OWASP_Java_Encoder_Project 참고.|
 |net.ngom.arrakis.filter.SQLInjectionFilter	|SQL Injection 공격시 자주 사용하는 특수문자 패턴을 제거하는 Filter이다.|
 
-## 7. 유의사항
+## 8. 유의사항
 - 일부 인코딩 관련하여 web.xml에 설정을 추가한 경우 먼저 인코딩 옵션을 기술하고 다음에 해당 XSS 필터를 사용해야 한다. (순서가 중요함) 아래 예시 참고
 ```xml
 <?xml version="1.0" encoding="utf-8"?>

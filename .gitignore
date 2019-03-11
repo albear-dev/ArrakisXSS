@@ -1,2 +1,4 @@
 /target/
-/Documents/
+/.settings/
+/.gitignore
+/.classpath
