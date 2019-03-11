@@ -1,16 +1,18 @@
 # ArrakisXSS
 Rule based message filter (Using servlet filter for XSS,  You want to filter for other purpose.)
 
-## 1. 개요
-- 이 모듈은 룰 기반의 필터링을 수행할 수 있는것이 장점이며, 서블릿 XSS방지 뿐만이 아니라 범용적으로 특정 값이 특정 조건에 만족하면 특정 문자열 필터링을 수행할수 있는 모듈로 동작하게 하도록 만든것이 모토입니다. 그래서 사용자는 URL및 키 비교 등 여러 조건을 설정파일에 추가함으로써 쉽게 동작하도록 설정할 수 있으며 개발자는 원하면 XSS 필터링 외에 특정 동작을 수행하는 필터를 확장하여 만들어 적용할 수 도 있습니다. 좀 특별한 예를 들자면 /process.do 에서 key1의 값을 암호화 해서 던지면 복호화하는 filter를 구현하여 서블릿에서 사용 가능하게도 이용이 가능합니다.
+*Read this in other languages: [English](README.md), [한국어](README.ko.md).*
 
-- 마지막으로 ArrakisXSS라는 이름은 제가 어릴적 좋아하던 프랭크 허버트의 Dune이라는 소설에서 나오는 사막행성의 이름에서 따 왔습니다. 이 행성에서는 거대한 모래벌레가 땅속을 돌아다니며 사막 위의 움직이는 것들을 잡아 먹고 다니지요.
+## 1. Summary
+- This module has an advantage of being able to perform rule-based filtering. It is a motto that not only prevents Servlet XSS, but also makes it possible to perform a specific string filtering when a specific value satisfies a specific condition. So, users can easily set various conditions such as URL and key comparison to be added to the configuration file, and developers can also create and apply filters that perform specific actions in addition to XSS filtering if desired. As a special example, if you encrypt the value of key1 in /process.do and implement a filter to decrypt it, you can use it in a servlet.
 
-## 2. 사용 가능 환경
-- java 1.7 이상의 환경 (일부 라이브러리가 1.7 이상을 필요로 함)
+- Finally, the name ArrakisXSS comes from the name of a desert planet from a novel by Frank Herbert, Dune, which I liked as a child. On this planet, giant sand worms roam the earth and eat the moving things on the desert.
 
-## 3. 사용법
-- 웹 어플리케이션의 WEB-INF/web.xml 에 아래 정보를 추가한다.
+## 2. Usable environment
+- java 1.7 or higher (some libraries require 1.7 or higher)
+
+## 3. How to use
+- Add the following information to the WEB-INF / web.xml of your web application.
 ```xml
 <filter>
 <filter-name>ArrakisXSSServletFilter</filter-name>
@@ -23,31 +25,31 @@ Rule based message filter (Using servlet filter for XSS,  You want to filter for
 </filter-mapping>
 ```
 
-- 웹 어플리케이션의 WEB-INF/lib 내에 라이브러리 파일을 복사한다. 기존에 동일 라이브러리가 있다면 복사하지 않아도 되며 버전이 다를 경우 최신버전으로 시도해 본다.
+- Copy the library file into WEB-INF / lib of the web application. If you already have the same library, you do not need to copy it. If the version is different, try the latest version.
 
-|JAR 경로                              |설명|
+|JAR path                              |Description|
 |:----                                 |:----|
-|WEB-INF/lib/XSSfilter-x.x.x.jar       |XSS 필터 core 라이브러리. 뒤에 버전을 붙임|
-|WEB-INF/lib/encoder-1.2.2.jar         |의존성 라이브러리 (owasp encoder 라이브러리)|
-|WEB-INF/lib/encoder-jsp-1.2.2.jar     |의존성 라이브러리 (owasp encoder 라이브러리)|
-|WEB-INF/lib/logback-classic-1.2.3.jar |의존성 라이브러리 (logging 관련 라이브러리)|
-|WEB-INF/lib/logback-core-1.2.3.jar    |의존성 라이브러리 (logging 관련 라이브러리)|
-|WEB-INF/lib/slf4j-api-1.7.25.jar      |의존성 라이브러리 (logging 관련 라이브러리)|
+|WEB-INF/lib/XSSfilter-x.x.x.jar       |XSS filter core library. Subsequent versions|
+|WEB-INF/lib/encoder-1.2.2.jar         |Dependency library (owasp encoder library)|
+|WEB-INF/lib/encoder-jsp-1.2.2.jar     |Dependency library (owasp encoder library)|
+|WEB-INF/lib/logback-classic-1.2.3.jar |Dependency library (logging library)|
+|WEB-INF/lib/logback-core-1.2.3.jar    |Dependency library (logging library)|
+|WEB-INF/lib/slf4j-api-1.7.25.jar      |Dependency library (logging library)|
 
-- 웹 어플리케이션의 WEB-INF/classes 내에 설정파일을 위치시킨다.
+- Locate the configuration file in WEB-INF / classes of the web application.
 
-|XML 설정파일 경로                      |설명|
+|XML Configuration file path           |Description|
 |:----                                 |:----|
-|WEB-INF/classes/logback.xml           |logging 관련 설정 (logback 설정 참고)|
-|WEB-INF/classes/ArrakisXSSConfig.xml  |XSS 필터 설정|
+|WEB-INF/classes/logback.xml           |logging related settings (see logback setting)|
+|WEB-INF/classes/ArrakisXSSConfig.xml  |XSS Filter settings|
 
-- WAS 서버를 기동한다.
+- WAS Start the server.
 
-## 4. 필더 모듈의 임시 해제
-- 모듈 사용을 중단하려면 web.xml 의 추가하였던 filter 설정과 filer-mapping 설정을 주석처리한다.
+## 4. Temporarily release the filter module
+- To stop using the module, comment out the filter and filer-mapping settings you added in web.xml.
 
-## 5. 설정 예제
-- 기본 설정 (전체적용) - ArrakisXSSConfig.xml
+## 5. Setting example
+- Basic setting (all applied) - ArrakisXSSConfig.xml
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
@@ -70,16 +72,16 @@ Rule based message filter (Using servlet filter for XSS,  You want to filter for
 </config>
 ```
 
-> 기본적으로 ArrakisXSS 의 설정은 크게 필터링 로직들을 기술하는 &lt;filters&gt; 와 적용 범위 및 조건을 정의하는 &lt;appliers&gt; 로 나누어 진다.
+> By default, the configuration of ArrakisXSS is largely defined by the &lt;filters&gt; And &lt;appliers&gt; that define coverage and conditions. Respectively.
 
-> filter 는 여러개 정의가 가능하며 필요할때 &lt;name&gt;에 고유 이름을 기술해 놓은 후 이후 &lt;appliers&gt;하위 조건부에서 기술해 사용이 가능하다. 그리고 실제 필터링 로직이 구현된 class의 경로는 &lt;filter&gt; 하위의 &lt;classPath&gt; 에 기술한다.
+> The filter can be defined multiple times and can be used in the &lt;appliers&gt; subcondition after describing the distinguished name &lt;name&gt; The path of the class in which the actual filtering logic is implemented is &lt;filter&gt; &lt;classPath&gt; .
 
-> &lt;appliers&gt; 내에는 여러개의 &lt;applier&gt; 가 선언될 수 있으며 순차적으로 조건 판단을 수행한다.
-먼저 조건에 부합하는 건이 있으면 해당 &lt;applier&gt;내 업무를 처리하고 다음 applier 부분을 수행한다.
+> &lt;appliers&gt; There are multiple &lt;applier&gt; Can be declared, and condition judgment is performed sequentially.
+  First, if there is anything that meets the condition, process the &lt;applier&gt; my work and do the next applier part.
 
-> &lt;appliers&gt; 내에서는 filter를 수행할 “조건” 을 입력하는 &lt;conditions&gt;와 필터 수행을 위해 적용 범위를 지정하는 &lt;inspect&gt; 로 나누어진다. 세부 내용은 바로 아래 설정 예제에서 확인 가능하다.
+> &lt;appliers&gt; &lt;conditions&gt; for entering a &quot;condition&quot; to perform a filter and &lt;inspect&gt; for specifying a scope for performing a filter. Respectively. Details can be found in the example below.
 
-- 특정 URL만 적용 / 제외, 특정 키값만 적용 / 제외 - ArrakisXSSConfig.xml
+- Apply / exclude specific URLs, apply / exclude specific key values only - ArrakisXSSConfig.xml
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
@@ -139,32 +141,32 @@ Rule based message filter (Using servlet filter for XSS,  You want to filter for
 </config>
 ```
 
-> 위 &lt;condition&gt;내 &lt;match&gt;에 해당하는 조건일 경우 실제 실행 설정인 &lt;inspect&gt; 의 속성이 exclude=”true”이면 해당 요청은 별도 처리 없이 통과시킨다.
+> In the case of the above condition &lt;condition&gt; within &lt;match&gt;, the actual execution setting &lt;inspect&gt; If the attribute of &quot;exclude&quot; is &quot;true&quot;, the request is passed without any processing.
 
-> 기본적으로는 여러개의 &lt;applier&gt;가 선언되어 있으면 순서대로 처리를 수행한다. 다만 applier의 옵션 중 break=”true” 로 설정된 부분이 있으면 선언된 &lt;applier&gt;를 수행하면 이후 &lt;applier&gt;는 수행하지 않는다.
+> Basically, if several &lt;applier&gt; are declared, processing is performed in order. However, if there is a portion set to break ="true" among the options of applier, &lt;applier&gt; is not performed after the &lt;applier&gt;
 	
-> 그 외 의 경우 두번째 &lt;applier&gt;를 비교하게 되고 해당 condition으로 특정 URI가 /process 로 시작하면서 key3라는 이름을 가진 키(파라메터) 의 경우에는 아래 &lt;inspect&gt; 를 통해 제외시킨다..
+> Otherwise, it compares the second &lt;applier&gt;. In the case of a key (parameter) whose name starts with a particular URI / process and whose name is key3, .
 
-> 세번째 applier에는 condition조건이 없으므로 요청 전체를 inspect 에 적용한 로직으로 수행한다. 예제에서는 OWASP-Filter와 SQLInjectionFiler가 선언되어 있으므로 두개를 순서대로 필터링 하게 된다.
+> The third applier does not have a condition condition, so it executes the entire request with logic applied to inspect. In the example, OWASP-Filter and SQLInjectionFiler are declared, so they are filtered in order.
 
 
-## 6. 설정 옵션 설명
-- 해당 저장소의 Documents 폴더 내 docx 파일 참고
+## 6. Setting Option Description
+- Note the docx file in the Documents folder of the repository
 
 |언어(language)   |파일명(filename)|
 |:----            |:----|
 |영문(english)    |ArrakisXSS Option Guide.en.docx|
 |한글(korean)     |ArrakisXSS Option Guide.ko.docx|
 
-## 7. 기본 제공 Filter 설명
-|CLASS 경로                                 |설명|
+## 7. Built-in Filter Description
+|CLASS Path                                 |Decription|
 |:----                                      |:----|
-|net.ngom.arrakis.filter.DefaultFilter	    |설정파일의 Rule설정에 따라 단순 정규식에 따른 Replace를 수행하는 Filter. 내부적으로 java의 replaceAll 함수를 이용한다.|
-|net.ngom.arrakis.filter.OWASPFilter	        |OWASP라는 비영리 오픈소스 웹 애플리케이션 보안 프로젝트에서 배포하는 보안취약점 개선 라이브러리를 사용한다. https://www.owasp.org/index.php/OWASP_Java_Encoder_Project 참고.|
-|net.ngom.arrakis.filter.SQLInjectionFilter	|SQL Injection 공격시 자주 사용하는 특수문자 패턴을 제거하는 Filter이다.|
+|net.ngom.arrakis.filter.DefaultFilter	    |Filter that performs replacement according to simple regular expression according to rule setting of setting file. Internally, we use the replaceAll function of java.|
+|net.ngom.arrakis.filter.OWASPFilter	        |It uses a vulnerability remover library distributed by OWASP, a nonprofit open source Web application security project. https://www.owasp.org/index.php/OWASP_Java_Encoder_Project|
+|net.ngom.arrakis.filter.SQLInjectionFilter	|It is a filter that removes the special character patterns frequently used in SQL Injection attack.|
 
-## 8. 유의사항
-- 일부 인코딩 관련하여 web.xml에 설정을 추가한 경우 먼저 인코딩 옵션을 기술하고 다음에 해당 XSS 필터를 사용해야 한다. (순서가 중요함) 아래 예시 참고
+## 8. Precautions
+- If you add settings to web.xml for some encodings, you must first describe the encoding options and then use the appropriate XSS filter. (Order is important) See example below
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
